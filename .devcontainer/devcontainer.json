@@ -1,0 +1,35 @@
+{
+  "name": "Auto Development Environment",
+  "image": "mcr.microsoft.com/devcontainers/universal:2-linux",
+  
+  "onCreateCommand": {
+    "install-httpie": "python3 -m pip install --user httpie httpie-jwt-auth",
+    "install-maven-11": "curl --connect-timeout 30 --max-time 300 -fsSL https://archive.apache.org/dist/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz | sudo tar xz -C /opt && sudo ln -sf /opt/apache-maven-3.9.6/bin/mvn /usr/local/bin/mvn",
+    "install-java-11": "sudo apt-get update -y && sudo apt-get install -y openjdk-11-jdk && sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java && sudo update-alternatives --set javac /usr/lib/jvm/java-11-openjdk-amd64/bin/javac",
+    "setup-docker": "sudo systemctl start docker || true && sudo usermod -aG docker $USER || true",
+    "setup-path": "echo 'export PATH=$HOME/.local/bin:$PATH' >> ~/.bashrc && echo 'export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64' >> ~/.bashrc && echo 'export MAVEN_HOME=/opt/apache-maven-3.9.6' >> ~/.bashrc",
+    "install-docker-compose": "sudo curl -L \"https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose && sudo chmod +x /usr/local/bin/docker-compose"
+  },
+  
+  "postStartCommand": "echo '🚀 웹 개발 환경 준비 완료!' && java -version && mvn -version && docker --version && http --version && docker-compose --version && if [ -d 'kafka' ]; then echo '📁 kafka 디렉토리 확인됨. 필요시 cd kafka && docker-compose up 실행하세요.'; else echo '⚠️ kafka 디렉토리를 찾을 수 없습니다.'; fi",
+  
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.vscode-java-pack",
+        "ms-vscode.docker",
+        "redhat.vscode-yaml",
+        "ms-vscode.vscode-json",
+        "humao.rest-client"
+      ],
+      "settings": {
+        "java.configuration.detectJdksAtStart": false,
+        "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx2G -Xms100m",
+        "java.home": "/usr/lib/jvm/java-11-openjdk-amd64",
+        "maven.executable.path": "/usr/local/bin/mvn"
+      }
+    }
+  },
+  
+  "remoteUser": "codespace"
+}
