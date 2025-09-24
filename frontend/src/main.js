@@ -1,32 +1,68 @@
-/* eslint-disable import/order */
-import '@/@iconify/icons-bundle'
-import App from '@/App.vue'
-import vuetify from '@/plugins/vuetify'
-import { loadFonts } from '@/plugins/webfontloader'
-import router from '@/router'
-import '@/styles/styles.scss'
-import '@core/scss/index.scss'
-import { createPinia } from 'pinia'
-import { createApp } from 'vue'
-import axios from 'axios';
-import { Icon } from '@iconify/vue';
+ /*eslint-disable*/
+import Vue from "vue";
+import App from "./App.vue";
+import vuetify from "./plugins/vuetify";
+import Managing from "./components";
+import router from './router';
+Vue.config.productionTip = false;
 
-loadFonts()
+const axios = require("axios").default;
 
-// Create vue app
-const app = createApp(App)
+// backend host url
+axios.backend = null; //"http://localhost:8088";
 
-// Setting Config
-axios.defaults.baseURL = '';
-app.config.globalProperties.$axios = axios;
+// axios.backendUrl = new URL(axios.backend);
+axios.fixUrl = function(original){
 
-// Component
-app.component('Icon',Icon)
+  if(!axios.backend && original.indexOf("/")==0) return original;
 
-// Use plugins
-app.use(vuetify)
-app.use(createPinia())
-app.use(router)
+  var url = null;
 
-// Mount vue app
-app.mount('#app')
+  try{
+    url = new URL(original);
+  }catch(e){
+    url = new URL(axios.backend + original);
+  }
+
+  if(!axios.backend) return url.pathname;
+
+  url.hostname = axios.backendUrl.hostname;
+  url.port = axios.backendUrl.port;
+
+  return url.href;
+}
+
+const templateFiles = require.context("./components", true);
+Vue.prototype.$ManagerLists = [];
+templateFiles.keys().forEach(function(tempFiles) {
+  if (!tempFiles.includes("Manager.vue") && tempFiles.includes("vue")) {
+    Vue.prototype.$ManagerLists.push(
+      tempFiles.replace("./", "").replace(".vue", "")
+    );
+  }
+});
+Vue.use(Managing);
+const pluralCaseList = []
+
+pluralCaseList.push( {plural: "orders", pascal: "Order"} )
+
+pluralCaseList.push( {plural: "inventories", pascal: "Inventory"} )
+
+
+Vue.prototype.$ManagerLists.forEach(function(item, idx) {
+  pluralCaseList.forEach(function(tmp) {
+    if(item.toLowerCase() == tmp.pascal.toLowerCase()) {
+      var obj = {
+        name: item,
+        plural: tmp.plural
+      }
+      Vue.prototype.$ManagerLists[idx] = obj
+    }
+  })
+})
+
+new Vue({
+  vuetify,
+  router,
+  render: h => h(App)
+}).$mount("#app");

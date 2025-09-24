@@ -1,6 +1,5 @@
 server:
   port: 8080
-
 spring:
   application:
     name: inventory
@@ -13,7 +12,6 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
-        implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
   cloud:
     stream:
       kafka:
@@ -30,14 +28,10 @@ spring:
       bindings:
         event-in:
           group: inventory
-#<<< EDA / Topic Name
-          destination: labshopgateway
-#>>> EDA / Topic Name
+          destination: labshopmonolith
           contentType: application/json
         event-out:
-#<<< EDA / Topic Name
-          destination: labshopgateway
-#>>> EDA / Topic Name
+          destination: labshopmonolith
           contentType: application/json
 
 logging:
@@ -47,18 +41,12 @@ logging:
 
 
 server:
-  port: 8083
+  port: 8082
 
 ---
 
 spring:
   profiles: docker
-  jpa:
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-        implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
   cloud:
     stream:
       kafka:
@@ -75,10 +63,10 @@ spring:
       bindings:
         event-in:
           group: inventory
-          destination: labshopgateway
+          destination: labshopmonolith
           contentType: application/json
         event-out:
-          destination: labshopgateway
+          destination: labshopmonolith
           contentType: application/json
 
 

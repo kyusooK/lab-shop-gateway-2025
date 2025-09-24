@@ -1,17 +1,21 @@
 <template>
     <div style="margin: 0 -15px 0 -15px;">
-        <v-card-title v-if="inList && payment.paymentType" style="font-size: 15px;">
-            PaymentType: {{payment.paymentType }}/Amount: {{payment.amount }}
+        <v-card-title>
+            {{label}}
         </v-card-title>
-        <v-card-text v-if="!inList">
-            <div v-if="editMode">
-                <v-text-field label="PaymentType" v-model="payment.paymentType"/>
+        <v-card-text v-if="value">
+            <div v-if="editMode" style="margin-top:-20px;">
+                <v-text-field label="PaymentType" v-model="value.paymentType"/>
             </div>
-            
-            <div v-if="editMode" style="margin-top:5px;">
-                <v-text-field type="number" label="Amount" v-model="payment.amount"/>
+            <div v-else>
+                PaymentType :  {{value.paymentType }}
             </div>
-            
+            <div v-if="editMode" style="margin-top:-20px;">
+                <v-text-field type="number" label="Amount" v-model="value.amount"/>
+            </div>
+            <div v-else>
+                Amount :  {{value.amount }}
+            </div>
         </v-card-text>
     </div>
 </template>
@@ -21,25 +25,20 @@
         name:"Payment",
         props: {
             editMode: Boolean,
-            modelValue : Object,
+            value : Object,
             label : String,
-            inList : Boolean
         },
-        data: () => ({
-            payment:{}
-        }),
         created(){
-            this.payment = this.modelValue
-            if(!this.payment) {
-                this.payment = {
+            if(!this.value) {
+                this.value = {
                     'paymentType': '',
                     'amount': 0,
                 };
             }
         },
         watch: {
-            payment(newVal) {
-                this.$emit('update:modelValue', newVal);
+            value(newVal) {
+                this.$emit('input', newVal);
             },
         },
     }

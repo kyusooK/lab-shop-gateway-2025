@@ -23,7 +23,6 @@
             label : String,
         },
         created(){
-            this.value = this.modelValue
             if(!this.value) {
                 this.value = {
                     'rate': 0,
@@ -33,7 +32,7 @@
         },
         watch: {
             value(newVal) {
-                this.$emit('update:modelValue', newVal);
+                this.$emit('input', newVal);
             },
         },
     }

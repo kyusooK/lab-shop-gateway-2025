@@ -1,6 +1,5 @@
 server:
   port: 8080
-
 spring:
   application:
     name: monolith
@@ -13,7 +12,6 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
-        implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
   cloud:
     stream:
       kafka:
@@ -30,14 +28,10 @@ spring:
       bindings:
         event-in:
           group: monolith
-#<<< EDA / Topic Name
-          destination: labshopgateway
-#>>> EDA / Topic Name
+          destination: labshopmonolith
           contentType: application/json
         event-out:
-#<<< EDA / Topic Name
-          destination: labshopgateway
-#>>> EDA / Topic Name
+          destination: labshopmonolith
           contentType: application/json
 
 logging:
@@ -46,23 +40,16 @@ logging:
     org.springframework.cloud: debug
 
 api:
-  url: 
-    inventory: localhost:8083 
-    
+  url:
+    inventory: localhost:8082
 
 server:
-  port: 8082
+  port: 8081
 
 ---
 
 spring:
   profiles: docker
-  jpa:
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-        implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
   cloud:
     stream:
       kafka:
@@ -79,14 +66,13 @@ spring:
       bindings:
         event-in:
           group: monolith
-          destination: labshopgateway
+          destination: labshopmonolith
           contentType: application/json
         event-out:
-          destination: labshopgateway
+          destination: labshopmonolith
           contentType: application/json
 
 api:
-  url: 
-    inventory: inventory:8080 
-    
+  url:
+    inventory: inventory:8080
 
